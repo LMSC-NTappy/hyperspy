@@ -241,6 +241,10 @@ def _estimate_shift1D(data, data_slice=slice(None), ref=None, ip=5,
 
 
 def _shift1D(data, **kwargs):
+    """
+    Shift the data by a certain amount specified in the args
+    """
+    #We get a bunch of values from the kwargs
     shift = kwargs.get('shift', 0.)
     original_axis = kwargs.get('original_axis', None)
     fill_value = kwargs.get('fill_value', np.nan)
@@ -248,16 +252,23 @@ def _shift1D(data, **kwargs):
     offset = kwargs.get('offset', 0.)
     scale = kwargs.get('scale', 1.)
     size = kwargs.get('size', 2)
+
+    #This is to ignore nan or 0
     if np.isnan(shift) or shift == 0:
         return data
+    #This is to create the new axis. I am pretty sure it does Nothing Useful
+    #since axis is re-created below
     axis = np.linspace(offset, offset + scale * (size - 1), size)
 
+    #This is the interpolant function
     si = interpolate.interp1d(original_axis, data, bounds_error=False,
                               fill_value=fill_value, kind=kind)
     offset = float(offset - shift)
-    axis = np.linspace(offset, offset + scale * (size - 1), size)
-    return si(axis)
 
+    #This is the new axis.
+    axis = np.linspace(offset, offset + scale * (size - 1), size)
+    #We return the newly interpolated axis
+    return si(axis)
 
 class Signal1D(BaseSignal, CommonSignal1D):
     """
