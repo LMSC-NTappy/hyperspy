@@ -423,27 +423,35 @@ class Signal1D(BaseSignal, CommonSignal1D):
             raise NotImplementedError(
                 "This operation is not implemented for non-uniform axes.")
 
-        # Figure out min/max shifts, and translate to shifts in index as well
+        # Remember that shifts are in axis units.
+        #Figure out min/max shifts, and translate to shifts in index as well
         minimum, maximum = np.nanmin(shift_array), np.nanmax(shift_array)
+        #If we need to shift by a negative amount it means that we will need
+        # to shift to the left, so the ax will be cropped above ihigh
         if minimum < 0:
             ihigh = 1 + axis.value2index(
                 axis.high_value + minimum,
                 rounding=math.floor)
         else:
             ihigh = axis.high_index + 1
+        #If we need to shift by a positive amount it means that we will need
+        # to shift to the right, i.e. axis will be cropped below ilow
         if maximum > 0:
-            ilow = axis.value2index(axis.offset + maximum,
+            ilow = axis.value2index(axis.low_value + maximum,
                                     rounding=math.ceil)
         else:
             ilow = axis.low_index
         if expand:
             if self._lazy:
                 ind = axis.index_in_array
+                #Here we only get the shape as list because tuple are immutables
+                #and we want to compute the new shape
                 pre_shape = list(self.data.shape)
                 post_shape = list(self.data.shape)
                 pre_chunks = list(self.data.chunks)
                 post_chunks = list(self.data.chunks)
 
+                #
                 pre_shape[ind] = axis.high_index - ihigh + 1
                 post_shape[ind] = ilow - axis.low_index
                 for chunks, shape in zip((pre_chunks, post_chunks),
