@@ -256,19 +256,13 @@ def _shift1D(data, **kwargs):
     #This is to ignore nan or 0
     if np.isnan(shift) or shift == 0:
         return data
-    #This is to create the new axis. I am pretty sure it does Nothing Useful
-    #since axis is re-created below
-    axis = np.linspace(offset, offset + scale * (size - 1), size)
+
 
     #This is the interpolant function
     si = interpolate.interp1d(original_axis, data, bounds_error=False,
                               fill_value=fill_value, kind=kind)
-    offset = float(offset - shift)
 
-    #This is the new axis.
-    axis = np.linspace(offset, offset + scale * (size - 1), size)
-    #We return the newly interpolated axis
-    return si(axis)
+    return si(original_axis-shift)
 
 class Signal1D(BaseSignal, CommonSignal1D):
     """
