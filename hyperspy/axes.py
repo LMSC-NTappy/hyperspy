@@ -265,7 +265,7 @@ class BaseDataAxis(t.HasTraits):
     high_index = t.Int()
     slice = t.Instance(slice)
     navigate = t.Bool(t.Undefined)
-    is_binnned = t.Bool(t.Undefined)
+    is_binned = t.Bool(t.Undefined)
     index = t.Range('low_index', 'high_index')
     axis = t.Array()
 
@@ -1642,7 +1642,7 @@ class AxesManager(t.HasTraits):
         axis: BaseDataAxis axis to replace the current axis with
 
         index_in_axes_manager: index of the axis in current signal to remplace
-            with axis passed in argument 
+            with axis passed in argument
 
         See also
         --------
