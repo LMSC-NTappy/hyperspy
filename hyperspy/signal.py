@@ -26,7 +26,8 @@ from pint import UnitRegistry, UndefinedUnitError
 from pathlib import Path
 
 import numpy as np
-import scipy as sp
+from scipy import integrate
+from scipy import signal as sp_signal
 import dask.array as da
 from matplotlib import pyplot as plt
 import traits.api as t
@@ -4086,8 +4087,8 @@ class BaseSignal(FancySlicing,
         """
         axis = self.axes_manager[axis]
         s = out or self._deepcopy_with_new_data(None)
-        data = sp.integrate.simps(y=self.data, x=axis.axis,
-                                  axis=axis.index_in_array)
+        data = integrate.simps(y=self.data, x=axis.axis,
+                               axis=axis.index_in_array)
         if out is not None:
             out.data[:] = data
             out.events.data_changed.trigger(obj=out)
@@ -6146,7 +6147,7 @@ class BaseSignal(FancySlicing,
         elif window == 'hamming':
             def window_function(m): return np.hamming(m)
         elif window == 'tukey':
-            def window_function(m): return sp.signal.tukey(m, tukey_alpha)
+            def window_function(m): return sp_signal.tukey(m, tukey_alpha)
         else:
             raise ValueError('Wrong type parameter value.')
 
